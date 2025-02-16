@@ -10,10 +10,12 @@ import SubmitButton from "@/components/Form/SubmitButton";
 import axios from "axios";
 import FeedbackMessage from "@/components/Form/FeedbackMessage";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function page() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState({ error: null, success: null });
+  const [error, setError] = useState(null);
 
   const VALIDATION_MESSAGES = {
     USERNAME_REQUIRED: "User name is required",
@@ -36,24 +38,20 @@ export default function page() {
   } = useForm();
 
   const handleFormSubmit = async (formData) => {
-    setFeedback({ error: null, success: null });
+    setError(null);
     setLoading(true);
     try {
       const { data } = await axios.post("/api/auth/signup", formData);
       if (data.success) {
-        setFeedback({ error: null, success: data.message });
+        setError(null);
         setLoading(false);
+        router.push("/");
       } else {
-        setFeedback({ error: data.message, success: null });
+        setError(null);
         setLoading(false);
       }
-
-      console.log("formData", formData);
     } catch (err) {
-      setFeedback({
-        error: err.response?.data?.message || "Something went wrong. Please try again",
-        success: null,
-      });
+      setError(err.response?.data?.message || "Something went wrong. Please try again");
       setLoading(false);
     }
   };
@@ -138,8 +136,7 @@ export default function page() {
             onInputChange={handleInputChange}
           />
 
-          {feedback.success && <FeedbackMessage message={feedback.success} type={"success"} />}
-          {feedback.error && <FeedbackMessage message={feedback.error} type={"error"} />}
+          {error && <FeedbackMessage message={error} type={"error"} />}
 
           <SubmitButton isLoading={loading} loadingLabel="Signing up..." label="Sign up" />
         </form>
