@@ -1,31 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { MdOutlineEmail, MdOutlineLock, MdOutlinePhone } from "react-icons/md";
+import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import TitleLeft from "@/components/Titles/TitleLeft";
 import InputField from "@/components/Form/InputField";
 import SubmitButton from "@/components/Form/SubmitButton";
 import axios from "axios";
 import FeedbackMessage from "@/components/Form/FeedbackMessage";
 import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import {
+  loginFailure,
+  LoginSuccess,
+  requestFailure,
+  requestStart,
+  resetError,
+} from "@/lib/redux/authSlice";
 
 export default function page() {
-  const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState({ error: null, success: null });
+  const { loading, error } = useSelector((state) => state.auth);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const VALIDATION_MESSAGES = {
-    USERNAME_REQUIRED: "User name is required",
-    USERNAME_MAX_LENGTH: "Max 24 characters",
     EMAIL_REQUIRED: "Email address is required",
     EMAIL_INVALID: "Invalid email",
     PASSWORD_REQUIRED: "Password is required",
     PASSWORD_MIN_LENGTH: "Min 8 characters",
     PASSWORD_MAX_LENGTH: "Max 24 characters",
     PASSWORD_PATTERN: "Must contain letters and numbers",
-    NUMBER_REQUIRED: "Phone number is required",
-    NUMBER_MIN_LENGTH: "Min 8 characters",
-    NUMBER_MAX_LENGTH: "Max 24 characters",
   };
 
   const {
@@ -35,33 +40,30 @@ export default function page() {
   } = useForm();
 
   const handleFormSubmit = async (formData) => {
-    setFeedback({ error: null, success: null });
-    setLoading(true);
+    dispatch(resetError());
     try {
+      dispatch(requestStart());
       const { data } = await axios.post("/api/auth/signin", formData);
       if (data.success) {
-        setFeedback({ error: null, success: data.message });
-        setLoading(false);
+        dispatch(LoginSuccess(data.user));
+        router.push("/");
       } else {
-        setFeedback({ error: data.message, success: null });
-        setLoading(false);
+        dispatch(loginFailure(data.message));
       }
-
-      console.log("formData", formData);
     } catch (err) {
-      setFeedback({
-        error: err.response?.data?.message || "Something went wrong. Please try again",
-        success: null,
-      });
-      setLoading(false);
+      dispatch(
+        requestFailure(err.response?.data?.message || "Something went wrong. Please try again")
+      );
     }
   };
 
   const handleInputChange = () => {
-    if (feedback.success || feedback.error) {
-      setFeedback({ error: null, success: null });
-    }
+    dispatch(resetError());
   };
+
+  useEffect(() => {
+    dispatch(resetError());
+  }, [dispatch]);
 
   return (
     <main className="max-w-xs mx-auto flex items-center justify-center">
@@ -76,7 +78,7 @@ export default function page() {
             icon={<MdOutlineEmail />}
             type="email"
             placeholder="Email address*"
-            name="userEmail"
+            name="email"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.EMAIL_REQUIRED,
@@ -93,7 +95,7 @@ export default function page() {
             icon={<MdOutlineLock />}
             type="password"
             placeholder="Password*"
-            name="userPassword"
+            name="password"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.PASSWORD_REQUIRED,
@@ -108,8 +110,7 @@ export default function page() {
             onInputChange={handleInputChange}
           />
 
-          {feedback.success && <FeedbackMessage message={feedback.success} type={"success"} />}
-          {feedback.error && <FeedbackMessage message={feedback.error} type={"error"} />}
+          {error && <FeedbackMessage message={error} type={"error"} />}
 
           <SubmitButton isLoading={loading} loadingLabel={"Signing in..."} label={"Sign in"} />
         </form>

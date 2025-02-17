@@ -10,23 +10,18 @@ export async function POST(req) {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return NextResponse.json(
-        { success: false, message: "Email already exists." },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: "Email already exists." });
     }
 
     const newUser = new User({ name, email, phone, password });
     await newUser.save();
 
-    return NextResponse.json(
-      { success: true, message: "User registered successfully.", user: newUser },
-      { status: 201 }
-    );
+    return NextResponse.json({
+      success: true,
+      message: "User registered successfully.",
+      user: newUser,
+    });
   } catch (error) {
-    return NextResponse.json(
-      { success: false, message: "Failed to register user." },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: "Failed to register user." });
   }
 }
