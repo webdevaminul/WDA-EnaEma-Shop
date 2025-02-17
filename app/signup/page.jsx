@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FiUser } from "react-icons/fi";
 import { MdOutlineEmail, MdOutlineLock, MdOutlinePhone } from "react-icons/md";
@@ -11,11 +11,19 @@ import axios from "axios";
 import FeedbackMessage from "@/components/Form/FeedbackMessage";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginFailure,
+  LoginSuccess,
+  requestFailure,
+  requestStart,
+  resetError,
+} from "@/lib/redux/authSlice";
 
 export default function page() {
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const VALIDATION_MESSAGES = {
     USERNAME_REQUIRED: "User name is required",
@@ -38,29 +46,30 @@ export default function page() {
   } = useForm();
 
   const handleFormSubmit = async (formData) => {
-    setError(null);
-    setLoading(true);
+    dispatch(resetError());
     try {
+      dispatch(requestStart());
       const { data } = await axios.post("/api/auth/signup", formData);
       if (data.success) {
-        setError(null);
-        setLoading(false);
+        dispatch(LoginSuccess(data.user));
         router.push("/");
       } else {
-        setError(null);
-        setLoading(false);
+        dispatch(loginFailure(data.message));
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong. Please try again");
-      setLoading(false);
+      dispatch(
+        requestFailure(err.response?.data?.message || "Something went wrong. Please try again")
+      );
     }
   };
 
   const handleInputChange = () => {
-    if (feedback.success || feedback.error) {
-      setFeedback({ error: null, success: null });
-    }
+    dispatch(resetError());
   };
+
+  useEffect(() => {
+    dispatch(resetError());
+  }, [dispatch]);
 
   return (
     <main className="max-w-xs mx-auto flex items-center justify-center">
@@ -75,7 +84,7 @@ export default function page() {
             icon={<FiUser />}
             type="text"
             placeholder="Full name*"
-            name="userName"
+            name="name"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.USERNAME_REQUIRED,
@@ -89,7 +98,7 @@ export default function page() {
             icon={<MdOutlineEmail />}
             type="email"
             placeholder="Email address*"
-            name="userEmail"
+            name="email"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.EMAIL_REQUIRED,
@@ -106,7 +115,7 @@ export default function page() {
             icon={<MdOutlinePhone />}
             type="number"
             placeholder="Phone Number*"
-            name="userPhone"
+            name="phone"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.NUMBER_REQUIRED,
@@ -121,7 +130,7 @@ export default function page() {
             icon={<MdOutlineLock />}
             type="password"
             placeholder="Create password*"
-            name="userPassword"
+            name="password"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.PASSWORD_REQUIRED,

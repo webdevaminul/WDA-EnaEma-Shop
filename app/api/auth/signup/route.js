@@ -3,21 +3,30 @@ import User from "@/models/User";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  await connectDB();
+  try {
+    await connectDB();
 
-  const { userName, userEmail, userPhone, userPassword } = await req.json();
+    const { name, email, phone, password } = await req.json();
 
-  const existingUser = await User.findOne({ userEmail });
-  if (existingUser) {
-    return NextResponse.json({ success: false, message: "Email already exists." }, { status: 400 });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return NextResponse.json(
+        { success: false, message: "Email already exists." },
+        { status: 400 }
+      );
+    }
+
+    const newUser = new User({ name, email, phone, password });
+    await newUser.save();
+
+    return NextResponse.json(
+      { success: true, message: "User registered successfully.", user: newUser },
+      { status: 201 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: "Failed to register user." },
+      { status: 500 }
+    );
   }
-
-  const newUser = new User({ userName, userEmail, userPhone, userPassword });
-
-  await newUser.save();
-
-  return NextResponse.json(
-    { success: true, message: "User registered successfully." },
-    { status: 201 }
-  );
 }
