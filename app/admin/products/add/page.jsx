@@ -1,15 +1,21 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { FiUser } from "react-icons/fi";
-import { MdError, MdOutlineEmail, MdOutlineLock, MdOutlinePhone } from "react-icons/md";
 import TitleLeft from "@/components/Titles/TitleLeft";
 import InputField from "@/components/Form/InputField";
 import SubmitButton from "@/components/Form/SubmitButton";
-import { MdTitle, MdAttachMoney, MdDescription, MdCategory, MdImage } from "react-icons/md";
+import { MdTitle, MdAttachMoney, MdCategory, MdImage } from "react-icons/md";
 import TextAreaField from "@/components/Form/TextAreaField";
+import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import FeedbackMessage from "@/components/Form/FeedbackMessage";
 
 export default function page() {
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const VALIDATION_MESSAGES = {
     PRODUCT_NAME_REQUIRED: "Product name is required",
     PRODUCT_NAME_MAX_LENGTH: "Max 40 characters",
@@ -26,14 +32,30 @@ export default function page() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
-  const handleFormSubmit = (data) => {
-    console.log("Product Data:", data);
+  const handleFormSubmit = async (formData) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const { data } = await axios.post("/api/products/add", formData);
+      if (data.success) {
+        router.push("/admin/products");
+        setLoading(false);
+        reset();
+      } else {
+        setError(data.message);
+        setLoading(false);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong. Please try again");
+      setLoading(false);
+    }
   };
 
   const handleInputChange = () => {
-    console.log("InputChange");
+    setError(null);
   };
 
   return (
@@ -90,7 +112,7 @@ export default function page() {
             icon={<MdCategory />}
             type="number"
             placeholder="Initial Quantity*"
-            name="quantity"
+            name="stock"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.PRODUCT_QUANTITY_REQUIRED,
@@ -115,7 +137,9 @@ export default function page() {
             rows={6}
           />
 
-          <SubmitButton isLoading={false} loadingLabel="Adding product..." label="Add product" />
+          {error && <FeedbackMessage message={error} type={"error"} />}
+
+          <SubmitButton isLoading={loading} loadingLabel="Adding product..." label="Add product" />
         </form>
       </section>
     </main>
