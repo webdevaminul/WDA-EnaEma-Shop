@@ -27,12 +27,12 @@ export default function AdminProducts() {
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
-    // try {
-    //   await axios.delete(`/api/products/${id}`);
-    //   setProducts(products.filter((product) => product._id !== id));
-    // } catch (error) {
-    //   console.error("Error deleting product", error);
-    // }
+    try {
+      await axios.delete(`/api/products/admin/delete/${id}`);
+      setProducts(products.filter((product) => product._id !== id));
+    } catch (error) {
+      console.error("Error deleting product", error);
+    }
   };
 
   return (
