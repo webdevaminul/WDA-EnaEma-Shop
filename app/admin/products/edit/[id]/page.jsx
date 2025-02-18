@@ -1,17 +1,19 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import axios from "axios";
+
 import TitleLeft from "@/components/Titles/TitleLeft";
 import InputField from "@/components/Form/InputField";
 import SubmitButton from "@/components/Form/SubmitButton";
 import { MdTitle, MdAttachMoney, MdCategory, MdImage } from "react-icons/md";
 import TextAreaField from "@/components/Form/TextAreaField";
-import { useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
 import FeedbackMessage from "@/components/Form/FeedbackMessage";
 
 export default function page() {
+  const { id } = useParams();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function page() {
     PRODUCT_PRICE_REQUIRED: "Product price is required",
     PRODUCT_PRICE_MIN: "Price must be at least 1",
     PRODUCT_QUANTITY_REQUIRED: "Quantity is required",
-    PRODUCT_QUANTITY_MIN: "Quantity must be at least 1",
+    PRODUCT_QUANTITY_MIN: "Quantity must be at least 0",
     PRODUCT_DESCRIPTION_REQUIRED: "Product description is required",
     PRODUCT_DESCRIPTION_MAX_LENGTH: "Max 1000 characters",
   };
@@ -31,37 +33,55 @@ export default function page() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-    reset,
   } = useForm();
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/details/${id}`);
+        if (data.success) {
+          const product = data.product;
+          setValue("name", product.name);
+          setValue("image", product.image);
+          setValue("price", product.price);
+          setValue("stock", product.stock);
+          setValue("description", product.description);
+        } else {
+          setError("Failed to fetch product data.");
+        }
+      } catch (error) {
+        setError("Error fetching product details.");
+      }
+    };
+
+    fetchProduct();
+  }, [id, setValue]);
 
   const handleFormSubmit = async (formData) => {
     setError(null);
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/products/admin/add", formData);
+      const { data } = await axios.put(`/api/products/admin/update/${id}`, formData);
       if (data.success) {
         router.push("/admin/products");
-        setLoading(false);
-        reset();
       } else {
         setError(data.message);
-        setLoading(false);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong. Please try again");
+      setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
     }
-  };
-
-  const handleInputChange = () => {
-    setError(null);
   };
 
   return (
     <main className="max-w-sm mx-auto flex items-center justify-center">
       <section className="my-10 w-full">
-        <TitleLeft title="Add Product" subTitle="Fill in the form to create a new product" />
+        <TitleLeft title="Edit Product" subTitle="Update product details" />
+
+        {error && <FeedbackMessage message={error} type="error" />}
 
         <form
           onSubmit={handleSubmit(handleFormSubmit)}
@@ -78,7 +98,6 @@ export default function page() {
               maxLength: { value: 40, message: VALIDATION_MESSAGES.PRODUCT_NAME_MAX_LENGTH },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
@@ -91,7 +110,6 @@ export default function page() {
               required: VALIDATION_MESSAGES.PRODUCT_IMAGE_REQUIRED,
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
@@ -105,26 +123,24 @@ export default function page() {
               min: { value: 1, message: VALIDATION_MESSAGES.PRODUCT_PRICE_MIN },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
             icon={<MdCategory />}
             type="number"
-            placeholder="Initial Quantity*"
+            placeholder="Stock Quantity*"
             name="stock"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.PRODUCT_QUANTITY_REQUIRED,
-              min: { value: 1, message: VALIDATION_MESSAGES.PRODUCT_QUANTITY_MIN },
+              min: { value: 0, message: VALIDATION_MESSAGES.PRODUCT_QUANTITY_MIN },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <TextAreaField
-            placeholder={"Enter a short description*"}
-            name={"description"}
+            placeholder="Enter a short description*"
+            name="description"
             register={register}
             validationRules={{
               required: VALIDATION_MESSAGES.PRODUCT_DESCRIPTION_REQUIRED,
@@ -137,9 +153,7 @@ export default function page() {
             rows={6}
           />
 
-          {error && <FeedbackMessage message={error} type={"error"} />}
-
-          <SubmitButton isLoading={loading} loadingLabel="Adding product..." label="Add product" />
+          <SubmitButton isLoading={loading} loadingLabel="Updating..." label="Update Product" />
         </form>
       </section>
     </main>

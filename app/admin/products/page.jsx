@@ -65,7 +65,7 @@ export default function AdminProducts() {
                     <td className="p-3">${product.price}</td>
                     <td className="p-3">{product.stock}</td>
                     <td className="p-3 flex gap-2">
-                      <Link href={`/admin/products/${product._id}`}>
+                      <Link href={`/products/details/${product._id}`}>
                         <TableButton variant="outline" size="sm">
                           <MdVisibility />
                         </TableButton>
