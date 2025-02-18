@@ -1,31 +1,45 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+// import { addToCart } from "@/redux/cartSlice";
+// import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { addToCart } from "@/lib/redux/cartSlice";
+import { addToWishlist, removeFromWishlist } from "@/lib/redux/wishlistSlice";
 
 export default function ProductDetails({ params }) {
-  // Using React.use() to unwrap the params object
   const { id } = React.use(params);
-  console.log(id);
   const [product, setProduct] = useState(null);
-  const router = useRouter();
+  const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const { data } = await axios.get(`/api/products/details/${id}`);
-        if (data.success) {
-          setProduct(data.product);
-        }
+        setProduct(data.product);
       } catch (error) {
         console.error("Error fetching product", error);
       }
     };
-    if (id) {
-      fetchProduct();
-    }
+    fetchProduct();
   }, [id]);
+
+  const handleAddToCart = () => {
+    if (product) {
+      dispatch(addToCart({ product, quantity }));
+    }
+  };
+
+  const handleWishlist = () => {
+    if (wishlist.some((item) => item._id === product._id)) {
+      dispatch(removeFromWishlist(product._id));
+    } else {
+      dispatch(addToWishlist(product));
+    }
+  };
 
   if (!product) return <p>Loading...</p>;
 
@@ -48,18 +62,42 @@ export default function ProductDetails({ params }) {
           >
             {product.stock > 0 ? "Available" : "Unavailable"}
           </p>
+
+          <div className="mt-4 flex gap-3">
+            <button
+              className="bg-gray-800 px-3 py-1 rounded"
+              onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))}
+            >
+              -
+            </button>
+            <span>{quantity}</span>
+            <button
+              className="bg-gray-800 px-3 py-1 rounded"
+              onClick={() => setQuantity((prev) => Math.min(prev + 1, product.stock))}
+            >
+              +
+            </button>
+          </div>
+
           <div className="mt-4 flex gap-3">
             <button
               className="bg-blue-500 text-white px-4 py-2 rounded"
-              onClick={() => router.push(`/cart`)}
+              onClick={handleAddToCart}
+              disabled={product.stock === 0}
             >
               Add to Cart
             </button>
             <button
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-              onClick={() => router.push(`/wishlist`)}
+              className={`px-4 py-2 rounded ${
+                wishlist.some((item) => item._id === product._id)
+                  ? "bg-gray-500"
+                  : "bg-yellow-500 text-white"
+              }`}
+              onClick={handleWishlist}
             >
-              Add to Wishlist
+              {wishlist.some((item) => item._id === product._id)
+                ? "Already in Wishlist"
+                : "Add to Wishlist"}
             </button>
           </div>
         </div>

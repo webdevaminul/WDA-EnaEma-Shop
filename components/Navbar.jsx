@@ -18,7 +18,7 @@ export default function Navbar() {
   const navItems = [
     { name: "Products", href: "/products" },
     { name: "Cart", href: "/cart" },
-    { name: "Orders", href: "/orders" },
+    { name: "Wishlist", href: "/wishlist" },
   ];
 
   const handleSignOut = async () => {
