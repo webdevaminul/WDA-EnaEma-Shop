@@ -39,7 +39,7 @@ export default function page() {
     setError(null);
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/products/add", formData);
+      const { data } = await axios.post("/api/products/admin/add", formData);
       if (data.success) {
         router.push("/admin/products");
         setLoading(false);

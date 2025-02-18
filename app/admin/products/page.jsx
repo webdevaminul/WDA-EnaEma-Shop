@@ -13,7 +13,7 @@ export default function AdminProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get("/api/products");
+        const { data } = await axios.get("/api/products/admin/list");
         console.log(data);
         setProducts(data?.products);
       } catch (error) {
