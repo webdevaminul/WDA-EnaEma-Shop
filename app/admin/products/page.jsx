@@ -14,7 +14,6 @@ export default function AdminProducts() {
     const fetchProducts = async () => {
       try {
         const { data } = await axios.get("/api/products/admin/list");
-        console.log(data);
         setProducts(data?.products);
       } catch (error) {
         console.error("Error fetching products", error);

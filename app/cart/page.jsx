@@ -1,18 +1,52 @@
 "use client";
 
-import { removeFromCart, updateQuantity } from "@/lib/redux/cartSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { removeFromCart, updateQuantity, setCartFromDB } from "@/lib/redux/cartSlice";
+import { syncCartWithDB } from "@/lib/redux/cartSlice";
+import axios from "axios";
 
-export default function page() {
-  const cartItems = useSelector((state) => state.cart.cartItems);
+export default function CartPage() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const userCartLoaded = useSelector((state) => state.cart.userCartLoaded);
 
-  const handleQuantityChange = (id, quantity, stock) => {
-    dispatch(updateQuantity({ productId: id, quantity, stock }));
+  const id = user?._id;
+
+  useEffect(() => {
+    const fetchCartFromDB = async () => {
+      if (user && user._id && !userCartLoaded) {
+        try {
+          const { data } = await axios.get(`/api/users/${id}/get`);
+          dispatch(setCartFromDB(data.cartItems));
+        } catch (error) {
+          console.error("Error fetching cart from DB:", error);
+        }
+      }
+    };
+    fetchCartFromDB();
+  }, [user, dispatch, userCartLoaded]);
+
+  const handleQuantityChange = (productId, quantity, stock) => {
+    dispatch(updateQuantity({ productId, quantity, stock }));
+
+    if (user && user._id) {
+      const updatedCart = cartItems.map((item) =>
+        item.productId === productId ? { ...item, quantity } : item
+      );
+
+      dispatch(syncCartWithDB(user._id, updatedCart));
+    }
   };
 
-  const handleRemove = (id) => {
-    dispatch(removeFromCart(id));
+  const handleRemove = (productId) => {
+    dispatch(removeFromCart(productId));
+
+    if (user && user._id) {
+      const updatedCart = cartItems.filter((item) => item.productId !== productId);
+      dispatch(syncCartWithDB(user._id, updatedCart));
+    }
   };
 
   return (
@@ -34,24 +68,28 @@ export default function page() {
           </thead>
           <tbody>
             {cartItems.map((item) => (
-              <tr key={item._id} className="border-b">
+              <tr key={item.productId} className="border-b">
                 <td className="p-3">{item.name}</td>
                 <td className="p-3">${item.price}</td>
                 <td className="p-3 flex gap-2">
                   <button
-                    className="bg-gray-800 px-3 py-1 rounded"
+                    className="bg-gray-800 px-3 py-1 rounded text-white"
                     onClick={() =>
-                      handleQuantityChange(item._id, Math.max(item.quantity - 1, 1), item.stock)
+                      handleQuantityChange(
+                        item.productId,
+                        Math.max(item.quantity - 1, 1),
+                        item.stock
+                      )
                     }
                   >
                     -
                   </button>
                   <span>{item.quantity}</span>
                   <button
-                    className="bg-gray-800 px-3 py-1 rounded"
+                    className="bg-gray-800 px-3 py-1 rounded text-white"
                     onClick={() =>
                       handleQuantityChange(
-                        item._id,
+                        item.productId,
                         Math.min(item.quantity + 1, item.stock),
                         item.stock
                       )
@@ -64,7 +102,7 @@ export default function page() {
                 <td className="p-3">
                   <button
                     className="bg-red-500 text-white px-3 py-1 rounded"
-                    onClick={() => handleRemove(item._id)}
+                    onClick={() => handleRemove(item.productId)}
                   >
                     Remove
                   </button>

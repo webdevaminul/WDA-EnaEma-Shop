@@ -1,19 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BiCreditCardFront } from "react-icons/bi";
 import { IoExitOutline, IoOptions } from "react-icons/io5";
 import { requestFailure, requestStart, userClearSuccess } from "@/lib/redux/authSlice";
 import axios from "axios";
+import { clearCart } from "@/lib/redux/cartSlice";
+import { clearWishlist } from "@/lib/redux/wishlistSlice";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { user } = useSelector((state) => state.auth);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const navItems = [
     { name: "Products", href: "/products" },
@@ -27,8 +30,10 @@ export default function Navbar() {
       const { data } = await axios.get("/api/auth/signout");
       if (data.success) {
         dispatch(userClearSuccess());
+        dispatch(clearCart());
+        dispatch(clearWishlist());
         setProfileMenuOpen(false);
-        navigate("/");
+        router.push("/");
       }
     } catch (error) {
       dispatch(

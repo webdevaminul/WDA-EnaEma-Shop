@@ -19,11 +19,15 @@ import {
   requestStart,
   resetError,
 } from "@/lib/redux/authSlice";
+import { setCartFromDB } from "@/lib/redux/cartSlice";
+import { setWishlistFromDB } from "@/lib/redux/wishlistSlice";
 
 export default function page() {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
   const router = useRouter();
+  const { cartItems } = useSelector((state) => state.cart);
+  const { wishlistItems } = useSelector((state) => state.wishlist);
 
   const VALIDATION_MESSAGES = {
     USERNAME_REQUIRED: "User name is required",
@@ -49,9 +53,16 @@ export default function page() {
     dispatch(resetError());
     try {
       dispatch(requestStart());
-      const { data } = await axios.post("/api/auth/signup", formData);
+      const requestData = {
+        ...formData,
+        cartItems,
+        wishlistItems,
+      };
+      const { data } = await axios.post("/api/auth/signup", requestData);
       if (data.success) {
         dispatch(LoginSuccess(data.user));
+        dispatch(setCartFromDB(data.cartItems));
+        dispatch(setWishlistFromDB(data.wishlistItems));
         router.push("/");
       } else {
         dispatch(loginFailure(data.message));

@@ -2,18 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { addToCart } from "@/redux/cartSlice";
-// import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import axios from "axios";
-import { addToCart } from "@/lib/redux/cartSlice";
-import { addToWishlist, removeFromWishlist } from "@/lib/redux/wishlistSlice";
+import { addToCart, syncCartWithDB } from "@/lib/redux/cartSlice";
+import { addToWishlist, removeFromWishlist, syncWishlistWithDB } from "@/lib/redux/wishlistSlice";
 
 export default function ProductDetails({ params }) {
   const { id } = React.use(params);
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
-  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const wishlist = useSelector((state) => state.wishlist.wishlistItems);
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -29,7 +29,23 @@ export default function ProductDetails({ params }) {
 
   const handleAddToCart = () => {
     if (product) {
-      dispatch(addToCart({ product, quantity }));
+      const cartItem = {
+        productId: product._id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+        quantity,
+        stock: product.stock,
+      };
+
+      dispatch(addToCart(cartItem));
+
+      if (user && user._id) {
+        const updatedCart = [...cartItems, cartItem];
+        if (user && user._id) {
+          dispatch(syncCartWithDB(user._id, updatedCart));
+        }
+      }
     }
   };
 
@@ -38,6 +54,14 @@ export default function ProductDetails({ params }) {
       dispatch(removeFromWishlist(product._id));
     } else {
       dispatch(addToWishlist(product));
+    }
+
+    if (user && user._id) {
+      const updatedWishlist = wishlist.some((item) => item._id === product._id)
+        ? wishlist.filter((item) => item._id !== product._id)
+        : [...wishlist, product];
+
+      dispatch(syncWishlistWithDB(user._id, updatedWishlist));
     }
   };
 
