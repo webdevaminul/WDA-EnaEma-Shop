@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 export default function OrderPage() {
   const searchParams = useSearchParams();
@@ -46,6 +47,19 @@ export default function OrderPage() {
       status: "Pending",
     };
     console.log("orderData", orderData);
+    try {
+      const { data } = await axios.post("/api/orders/create", orderData);
+
+      if (data.success) {
+        alert("Order placed successfully!");
+        router.push("/orders");
+      } else {
+        alert("Failed to place order.");
+      }
+    } catch (error) {
+      console.error("Order error:", error);
+      alert("Error placing order.");
+    }
   };
 
   return (
