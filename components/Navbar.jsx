@@ -59,16 +59,19 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="bg-gray-100 shadow-md px-2 py-3 md:p-4 sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center gap-2">
-        <Link href="/" className="text-xl md:text-2xl font-semibold text-gray-900 font-serif mb-1">
+    <nav className="sticky top-0 z-50">
+      <div className="border-y container mx-auto flex justify-between items-center gap-2 px-2 py-3 md:p-4 ">
+        <Link
+          href="/"
+          className="text-xl md:text-2xl font-semibold text-emerald-600 font-serif mb-1"
+        >
           EnaEma
         </Link>
 
         <ul className={`flex items-center space-x-1 sm:space-x-2 md:space-x-4`}>
           <Link
             href="/products"
-            className="text-gray-700 hover:text-gray-900 md:font-semibold transition"
+            className="text-gray-600 hover:text-emerald-500 md:font-semibold transition"
           >
             Products
           </Link>
@@ -81,7 +84,7 @@ export default function Navbar() {
           />
 
           {user ? (
-            <div className="relative border-2 border-gray-900 rounded-full aspect-square">
+            <div className="relative border-2 border-gray-600 hover:border-emerald-500 rounded-full aspect-square">
               <button
                 ref={profileImageRef}
                 className="flex items-center focus:outline-none"
@@ -108,7 +111,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/signin"
-              className="px-2 md:px-4 py-2 sm:py-2 rounded-full bg-gray-900 text-gray-100 text-sm md:text-base hover:bg-gray-700 transition"
+              className="px-2 md:px-4 py-2 sm:py-2 rounded-full bg-emerald-600 text-white text-sm md:text-base hover:bg-emerald-500 transition"
             >
               Sign In
             </Link>
@@ -123,8 +126,8 @@ const NavItem = ({ href, name, icon, count, pathname }) => (
   <li>
     <Link
       href={href}
-      className={`p-2 flex items-center aspect-square hover:bg-gray-700 rounded-full gap-2 transition ${
-        pathname === href ? "bg-gray-900 text-gray-100" : "text-gray-900 hover:text-gray-100"
+      className={`p-2 flex items-center aspect-square hover:bg-emerald-500 rounded-full gap-2 transition ${
+        pathname === href ? "bg-emerald-600 text-white" : "text-gray-600 hover:text-white"
       }`}
     >
       {icon && (
@@ -145,8 +148,8 @@ const NavItem = ({ href, name, icon, count, pathname }) => (
 const ProfileMenu = ({ user, handleSignOut, setProfileMenuOpen }) => (
   <div className="absolute top-full right-0 mt-2 md:mt-3 w-56 bg-white shadow-lg border border-gray-200 rounded-xl p-2 z-50">
     <div className="px-4 py-2">
-      <p className="font-semibold text-gray-900">Hi, {user?.name}</p>
-      <p className="text-sm text-gray-700">{user?.email}</p>
+      <p className="font-semibold text-gray-600">Hi, {user?.name}</p>
+      <p className="text-sm text-gray-600">{user?.email}</p>
     </div>
     <div className="border-t border-gray-200 my-2"></div>
 
@@ -187,7 +190,7 @@ const MenuItem = ({ href, label, icon, setProfileMenuOpen }) => (
   <Link
     href={href}
     onClick={() => setProfileMenuOpen(false)}
-    className="flex gap-2 items-center p-2 text-sm text-gray-900 hover:bg-gray-100 transition"
+    className="flex gap-2 items-center p-2 text-sm text-gray-600 hover:bg-gray-100 transition"
   >
     {icon} {label}
   </Link>

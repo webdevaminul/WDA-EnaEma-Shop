@@ -1,7 +1,9 @@
+import Hero from "@/components/Home/Hero";
+
 export default function Home() {
   return (
     <main>
-      <h1>Ena Ema Shop</h1>
+      <Hero />
     </main>
   );
 }
