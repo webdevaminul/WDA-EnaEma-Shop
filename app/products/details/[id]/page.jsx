@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { addToCart, syncCartWithDB } from "@/lib/redux/cartSlice";
 import { addToWishlist, removeFromWishlist, syncWishlistWithDB } from "@/lib/redux/wishlistSlice";
+import Link from "next/link";
 
 export default function ProductDetails({ params }) {
   const { id } = React.use(params);
@@ -123,6 +124,22 @@ export default function ProductDetails({ params }) {
                 ? "Already in Wishlist"
                 : "Add to Wishlist"}
             </button>
+            <Link
+              href={{
+                pathname: `/products/details/${product._id}/order`,
+                query: {
+                  id: product._id,
+                  name: product.name,
+                  image: product.image,
+                  price: product.price,
+                  stock: product.stock,
+                  quantity: quantity,
+                },
+              }}
+              className={`px-4 py-2 rounded bg-red-500  text-white}`}
+            >
+              Order Now
+            </Link>
           </div>
         </div>
       </div>
