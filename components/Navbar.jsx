@@ -20,6 +20,7 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const router = useRouter();
   const profileMenuRef = useRef(null);
+  const profileImageRef = useRef(null);
 
   const handleSignOut = async () => {
     try {
@@ -41,7 +42,12 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target) &&
+        profileImageRef.current &&
+        !profileImageRef.current.contains(event.target)
+      ) {
         setProfileMenuOpen(false);
       }
     };
@@ -77,8 +83,9 @@ export default function Navbar() {
           {user ? (
             <div className="relative border-2 border-gray-900 rounded-full aspect-square">
               <button
+                ref={profileImageRef}
                 className="flex items-center focus:outline-none"
-                onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                onClick={() => setProfileMenuOpen((prev) => !prev)}
               >
                 <img
                   src={user?.profile}
