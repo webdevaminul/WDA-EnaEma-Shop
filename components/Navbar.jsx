@@ -99,6 +99,15 @@ export default function Navbar() {
                   )}
 
                   <Link
+                    href="/order-history"
+                    onClick={() => setProfileMenuOpen(false)}
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                  >
+                    <IoOptions className="text-xl mr-2" />
+                    Order History
+                  </Link>
+
+                  <Link
                     href="/account-settings"
                     onClick={() => setProfileMenuOpen(false)}
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
