@@ -5,7 +5,20 @@ import WishlistToggle from "./Buttons/WishlistToggle";
 const ProductCard = ({ product }) => {
   return (
     <div className="col-span-12 sm:col-span-6 md:col-span-3 border rounded-lg hover:shadow-lg p-3 animate-fade-in">
-      <Link href={`/products/details/${product._id}`} className="relative">
+      <Link
+        href={{
+          pathname: `/products/details/${product._id}`,
+          query: {
+            id: product._id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            description: product.description,
+            stock: product.stock,
+          },
+        }}
+        className="relative"
+      >
         <img src={product.image} alt={product.name} className="w-full h-40 object-cover" />
         <p
           className={`absolute top-0 left-0 text-sm rounded ${
