@@ -1,5 +1,5 @@
-import { connectDB } from "@/lib/db";
 import User from "@/models/User";
+import { connectDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -13,7 +13,6 @@ export async function POST(req) {
       return NextResponse.json({ success: false, message: "Email already exists." });
     }
 
-    // Directly initialize cart and wishlist if provided
     const updatedCart = cartItems.map((item) => ({
       productId: item.productId,
       name: item.name,

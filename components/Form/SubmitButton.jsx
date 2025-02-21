@@ -3,7 +3,7 @@ export default function SubmitButton({ isLoading, loadingLabel, label }) {
     <button
       disabled={isLoading}
       type="submit"
-      className="w-full p-2 bg-blue-500 hover:bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+      className="animate-fade-in w-full p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed"
     >
       {isLoading ? loadingLabel : label}
     </button>

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import WishlistToggle from "@/components/Buttons/WishlistToggle";
 import CartAdd from "@/components/Buttons/CartAdd";
@@ -18,7 +17,6 @@ export default function ProductDetails() {
     description: searchParams.get("description"),
     stock: parseInt(searchParams.get("stock"), 10),
   };
-  const [quantity, setQuantity] = useState(1);
 
   return (
     <div className="container mx-auto p-6 animate-fade-in-right">
@@ -43,41 +41,34 @@ export default function ProductDetails() {
           <p className="text-gray-600 mt-4">{product.description}</p>
 
           <div className="mt-4 flex items-center gap-3">
-            <button
-              className="bg-emerald-600 hover:bg-emerald-500 text-white p-2 aspect-square w-9 h-9 rounded-full text-lg flex items-center justify-center"
-              onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))}
-            >
-              -
-            </button>
-            <span>{quantity}</span>
-            <button
-              className="bg-emerald-600 hover:bg-emerald-500 text-white p-2 aspect-square w-9 h-9 rounded-full text-lg flex items-center justify-center"
-              onClick={() => setQuantity((prev) => Math.min(prev + 1, product.stock))}
-            >
-              +
-            </button>
-
-            <CartAdd product={product} quantity={quantity} />
-
+            <CartAdd product={product} />
             <WishlistToggle product={product} />
           </div>
 
           <div className="mt-4 flex gap-3">
-            <Link
-              href={{
-                pathname: `/products/details/${product._id}/order`,
-                query: {
-                  id: product._id,
-                  name: product.name,
-                  image: product.image,
-                  price: product.price,
-                  stock: product.stock,
-                  quantity: quantity,
-                },
-              }}
-            >
-              <PrimaryBtn label={"Order Now"} />
-            </Link>
+            {product.stock > 0 ? (
+              <Link
+                href={{
+                  pathname: `/products/details/${product._id}/order`,
+                  query: {
+                    id: product._id,
+                    name: product.name,
+                    image: product.image,
+                    price: product.price,
+                    stock: product.stock,
+                  },
+                }}
+              >
+                <PrimaryBtn label={"Order Now"} />
+              </Link>
+            ) : (
+              <button
+                disabled
+                className="bg-gray-300 text-gray-600 cursor-not-allowed px-4 py-2 rounded"
+              >
+                Out of Stock
+              </button>
+            )}
           </div>
         </div>
       </div>

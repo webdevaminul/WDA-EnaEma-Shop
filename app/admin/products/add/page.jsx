@@ -1,32 +1,21 @@
 "use client";
 
+import axios from "axios";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { MdTitle, MdAttachMoney, MdCategory, MdImage } from "react-icons/md";
 import TitleLeft from "@/components/Titles/TitleLeft";
 import InputField from "@/components/Form/InputField";
 import SubmitButton from "@/components/Form/SubmitButton";
-import { MdTitle, MdAttachMoney, MdCategory, MdImage } from "react-icons/md";
 import TextAreaField from "@/components/Form/TextAreaField";
-import { useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
 import FeedbackMessage from "@/components/Form/FeedbackMessage";
+import { VALIDATION_MESSAGES } from "@/utils/validationMessages";
 
 export default function page() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const VALIDATION_MESSAGES = {
-    PRODUCT_NAME_REQUIRED: "Product name is required",
-    PRODUCT_NAME_MAX_LENGTH: "Max 40 characters",
-    PRODUCT_IMAGE_REQUIRED: "Product image is required",
-    PRODUCT_PRICE_REQUIRED: "Product price is required",
-    PRODUCT_PRICE_MIN: "Price must be at least 1",
-    PRODUCT_QUANTITY_REQUIRED: "Quantity is required",
-    PRODUCT_QUANTITY_MIN: "Quantity must be at least 1",
-    PRODUCT_DESCRIPTION_REQUIRED: "Product description is required",
-    PRODUCT_DESCRIPTION_MAX_LENGTH: "Max 1000 characters",
-  };
 
   const {
     register,
@@ -54,10 +43,6 @@ export default function page() {
     }
   };
 
-  const handleInputChange = () => {
-    setError(null);
-  };
-
   return (
     <main className="max-w-sm mx-auto flex items-center justify-center">
       <section className="my-10 w-full">
@@ -78,7 +63,6 @@ export default function page() {
               maxLength: { value: 40, message: VALIDATION_MESSAGES.PRODUCT_NAME_MAX_LENGTH },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
@@ -91,7 +75,6 @@ export default function page() {
               required: VALIDATION_MESSAGES.PRODUCT_IMAGE_REQUIRED,
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
@@ -105,7 +88,6 @@ export default function page() {
               min: { value: 1, message: VALIDATION_MESSAGES.PRODUCT_PRICE_MIN },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
@@ -119,7 +101,6 @@ export default function page() {
               min: { value: 1, message: VALIDATION_MESSAGES.PRODUCT_QUANTITY_MIN },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <TextAreaField
@@ -129,7 +110,7 @@ export default function page() {
             validationRules={{
               required: VALIDATION_MESSAGES.PRODUCT_DESCRIPTION_REQUIRED,
               maxLength: {
-                value: 1000,
+                value: 500,
                 message: VALIDATION_MESSAGES.PRODUCT_DESCRIPTION_MAX_LENGTH,
               },
             }}

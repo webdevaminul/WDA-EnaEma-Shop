@@ -60,65 +60,60 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50">
-      <div className="border-y container mx-auto flex justify-between items-center gap-2 px-2 py-3 md:p-4 ">
+    <nav className="border-y container mx-auto flex justify-between items-center gap-1 px-2 py-3 md:p-4 ">
+      <Link href="/" className="text-xl md:text-2xl font-semibold text-emerald-600 font-serif mb-1">
+        EnaEma
+      </Link>
+
+      <ul className={`flex items-center space-x-1 sm:space-x-2 md:space-x-4`}>
         <Link
-          href="/"
-          className="text-xl md:text-2xl font-semibold text-emerald-600 font-serif mb-1"
+          href="/products"
+          className="text-gray-600 hover:text-emerald-500 md:font-semibold transition"
         >
-          EnaEma
+          Products
         </Link>
+        <NavItem href="/cart" icon={<BiCart />} count={cartQuantity} pathname={pathname} />
+        <NavItem
+          href="/wishlist"
+          icon={<BiHeart />}
+          count={wishlistItems.length}
+          pathname={pathname}
+        />
 
-        <ul className={`flex items-center space-x-1 sm:space-x-2 md:space-x-4`}>
-          <Link
-            href="/products"
-            className="text-gray-600 hover:text-emerald-500 md:font-semibold transition"
-          >
-            Products
-          </Link>
-          <NavItem href="/cart" icon={<BiCart />} count={cartQuantity} pathname={pathname} />
-          <NavItem
-            href="/wishlist"
-            icon={<BiHeart />}
-            count={wishlistItems.length}
-            pathname={pathname}
-          />
-
-          {user ? (
-            <div className="relative border-2 border-gray-600 hover:border-emerald-500 rounded-full aspect-square">
-              <button
-                ref={profileImageRef}
-                className="flex items-center focus:outline-none"
-                onClick={() => setProfileMenuOpen((prev) => !prev)}
-              >
-                <img
-                  src={user?.profile}
-                  alt="User Avatar"
-                  className="h-9 w-9 rounded-full object-cover"
-                  loading="lazy"
-                />
-              </button>
-
-              {profileMenuOpen && (
-                <div ref={profileMenuRef}>
-                  <ProfileMenu
-                    user={user}
-                    handleSignOut={handleSignOut}
-                    setProfileMenuOpen={setProfileMenuOpen}
-                  />
-                </div>
-              )}
-            </div>
-          ) : (
-            <Link
-              href="/signin"
-              className="px-2 md:px-4 py-2 sm:py-2 rounded-full bg-emerald-600 text-white text-sm md:text-base hover:bg-emerald-500 transition"
+        {user ? (
+          <div className="relative border-2 border-gray-600 hover:border-emerald-500 rounded-full aspect-square">
+            <button
+              ref={profileImageRef}
+              className="flex items-center focus:outline-none"
+              onClick={() => setProfileMenuOpen((prev) => !prev)}
             >
-              Sign In
-            </Link>
-          )}
-        </ul>
-      </div>
+              <img
+                src={user?.profile}
+                alt="User Avatar"
+                className="h-9 w-9 rounded-full object-cover"
+                loading="lazy"
+              />
+            </button>
+
+            {profileMenuOpen && (
+              <div ref={profileMenuRef}>
+                <ProfileMenu
+                  user={user}
+                  handleSignOut={handleSignOut}
+                  setProfileMenuOpen={setProfileMenuOpen}
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link
+            href="/signin"
+            className="px-2 md:px-4 py-2 sm:py-2 rounded-full bg-emerald-600 text-white text-sm md:text-base hover:bg-emerald-500 transition"
+          >
+            Sign In
+          </Link>
+        )}
+      </ul>
     </nav>
   );
 }

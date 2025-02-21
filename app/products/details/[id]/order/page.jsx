@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -12,16 +12,18 @@ export default function OrderPage() {
     name: searchParams.get("name"),
     image: searchParams.get("image"),
     price: parseFloat(searchParams.get("price")),
-    quantity: parseInt(searchParams.get("quantity")),
+    // quantity: parseInt(searchParams.get("quantity")),
   };
   const { user } = useSelector((state) => state.auth);
 
   const router = useRouter();
   const [address, setAddress] = useState("");
 
-  if (!user) {
-    router.push("/login");
-  }
+  useEffect(() => {
+    if (!user) {
+      router.push("/signin");
+    }
+  }, [user, router]);
 
   const handlePlaceOrder = async () => {
     if (!address.trim()) {
@@ -38,7 +40,7 @@ export default function OrderPage() {
           name: product.name,
           image: product.image,
           price: product.price,
-          quantity: product.quantity,
+          quantity: 1,
         },
       ],
       totalAmount: product.price * product.quantity,

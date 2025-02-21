@@ -44,9 +44,7 @@ export default function Footer() {
           >
             EnaEma
           </Link>
-          <p>
-            EnaEma is the biggest market of grocery products. Get your daily needs from our store.
-          </p>
+          <p className="max-w-sm">Get your daily needs from our store.</p>
         </aside>
 
         <FooterLinkSection title="Services" links={servicesLinks} />

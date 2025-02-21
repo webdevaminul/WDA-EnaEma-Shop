@@ -1,34 +1,22 @@
 "use client";
 
+import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
-
+import { MdTitle, MdAttachMoney, MdCategory, MdImage } from "react-icons/md";
 import TitleLeft from "@/components/Titles/TitleLeft";
 import InputField from "@/components/Form/InputField";
 import SubmitButton from "@/components/Form/SubmitButton";
-import { MdTitle, MdAttachMoney, MdCategory, MdImage } from "react-icons/md";
 import TextAreaField from "@/components/Form/TextAreaField";
 import FeedbackMessage from "@/components/Form/FeedbackMessage";
+import { VALIDATION_MESSAGES } from "@/utils/validationMessages";
 
 export default function page() {
   const { id } = useParams();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const VALIDATION_MESSAGES = {
-    PRODUCT_NAME_REQUIRED: "Product name is required",
-    PRODUCT_NAME_MAX_LENGTH: "Max 40 characters",
-    PRODUCT_IMAGE_REQUIRED: "Product image is required",
-    PRODUCT_PRICE_REQUIRED: "Product price is required",
-    PRODUCT_PRICE_MIN: "Price must be at least 1",
-    PRODUCT_QUANTITY_REQUIRED: "Quantity is required",
-    PRODUCT_QUANTITY_MIN: "Quantity must be at least 0",
-    PRODUCT_DESCRIPTION_REQUIRED: "Product description is required",
-    PRODUCT_DESCRIPTION_MAX_LENGTH: "Max 1000 characters",
-  };
 
   const {
     register,
@@ -145,7 +133,7 @@ export default function page() {
             validationRules={{
               required: VALIDATION_MESSAGES.PRODUCT_DESCRIPTION_REQUIRED,
               maxLength: {
-                value: 1000,
+                value: 500,
                 message: VALIDATION_MESSAGES.PRODUCT_DESCRIPTION_MAX_LENGTH,
               },
             }}

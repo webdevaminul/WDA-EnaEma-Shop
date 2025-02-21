@@ -1,17 +1,20 @@
 "use client";
 
+import axios from "axios";
+import Link from "next/link";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FiUser } from "react-icons/fi";
 import { MdOutlineEmail, MdOutlineLock, MdOutlinePhone } from "react-icons/md";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import TitleLeft from "@/components/Titles/TitleLeft";
 import InputField from "@/components/Form/InputField";
 import SubmitButton from "@/components/Form/SubmitButton";
-import axios from "axios";
 import FeedbackMessage from "@/components/Form/FeedbackMessage";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { setCartFromDB } from "@/lib/redux/cartSlice";
+import { setWishlistFromDB } from "@/lib/redux/wishlistSlice";
+import { VALIDATION_MESSAGES } from "@/utils/validationMessages";
 import {
   loginFailure,
   LoginSuccess,
@@ -19,29 +22,13 @@ import {
   requestStart,
   resetError,
 } from "@/lib/redux/authSlice";
-import { setCartFromDB } from "@/lib/redux/cartSlice";
-import { setWishlistFromDB } from "@/lib/redux/wishlistSlice";
 
-export default function page() {
+export default function Signup() {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
   const router = useRouter();
+  const { loading, error } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.cart);
   const { wishlistItems } = useSelector((state) => state.wishlist);
-
-  const VALIDATION_MESSAGES = {
-    USERNAME_REQUIRED: "User name is required",
-    USERNAME_MAX_LENGTH: "Max 24 characters",
-    EMAIL_REQUIRED: "Email address is required",
-    EMAIL_INVALID: "Invalid email",
-    PASSWORD_REQUIRED: "Password is required",
-    PASSWORD_MIN_LENGTH: "Min 8 characters",
-    PASSWORD_MAX_LENGTH: "Max 24 characters",
-    PASSWORD_PATTERN: "Must contain letters and numbers",
-    NUMBER_REQUIRED: "Phone number is required",
-    NUMBER_MIN_LENGTH: "Min 8 characters",
-    NUMBER_MAX_LENGTH: "Max 24 characters",
-  };
 
   const {
     register,
@@ -51,8 +38,8 @@ export default function page() {
 
   const handleFormSubmit = async (formData) => {
     dispatch(resetError());
+    dispatch(requestStart());
     try {
-      dispatch(requestStart());
       const requestData = {
         ...formData,
         cartItems,
@@ -74,13 +61,11 @@ export default function page() {
     }
   };
 
-  const handleInputChange = () => {
-    dispatch(resetError());
-  };
-
   useEffect(() => {
-    dispatch(resetError());
-  }, [dispatch]);
+    if (error) {
+      dispatch(resetError());
+    }
+  }, [dispatch, error]);
 
   return (
     <main className="max-w-xs mx-auto flex items-center justify-center">
@@ -102,7 +87,6 @@ export default function page() {
               maxLength: { value: 24, message: VALIDATION_MESSAGES.USERNAME_MAX_LENGTH },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
@@ -119,7 +103,6 @@ export default function page() {
               },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
@@ -134,7 +117,6 @@ export default function page() {
               maxLength: { value: 24, message: VALIDATION_MESSAGES.NUMBER_MAX_LENGTH },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           <InputField
@@ -153,7 +135,6 @@ export default function page() {
               },
             }}
             errors={errors}
-            onInputChange={handleInputChange}
           />
 
           {error && <FeedbackMessage message={error} type={"error"} />}
@@ -163,7 +144,7 @@ export default function page() {
 
         <p className="text-sm text-center">
           Already have an account?
-          <Link href="/signin" className="text-blue-500 hover:underline ml-1">
+          <Link href="/signin" className="text-emerald-600 hover:underline ml-1">
             Sign in here
           </Link>
         </p>
