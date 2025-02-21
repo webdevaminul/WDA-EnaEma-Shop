@@ -21,6 +21,7 @@ export default function Navbar() {
   const router = useRouter();
   const profileMenuRef = useRef(null);
   const profileImageRef = useRef(null);
+  const cartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const handleSignOut = async () => {
     try {
@@ -75,7 +76,7 @@ export default function Navbar() {
           >
             Products
           </Link>
-          <NavItem href="/cart" icon={<BiCart />} count={cartItems.length} pathname={pathname} />
+          <NavItem href="/cart" icon={<BiCart />} count={cartQuantity} pathname={pathname} />
           <NavItem
             href="/wishlist"
             icon={<BiHeart />}
@@ -134,7 +135,7 @@ const NavItem = ({ href, name, icon, count, pathname }) => (
         <span className="relative text-lg md:text-xl ">
           {icon}
           {count > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+            <span className="absolute -bottom-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
               {count}
             </span>
           )}
