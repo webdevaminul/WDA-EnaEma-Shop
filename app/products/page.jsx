@@ -1,50 +1,40 @@
-"use client";
+import ProductCard from "@/components/ProductCard";
+import TitleLeft from "@/components/Titles/TitleLeft";
 
-import axios from "axios";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+// Fetch products on the server side
+async function getProducts() {
+  try {
+    const res = await fetch(`http://localhost:3000/api/products/list`, {
+      cache: "no-store",
+    });
 
-export default function page() {
-  const [products, setProducts] = useState([]);
+    if (!res.ok) {
+      throw new Error("Failed to fetch products");
+    }
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const { data } = await axios.get("/api/products/list");
-        setProducts(data?.products);
-      } catch (error) {
-        console.error("Error fetching products", error);
-      }
-    };
-    fetchProducts();
-  }, []);
+    const data = await res.json();
+    return data?.products || [];
+  } catch (error) {
+    console.error("Error fetching products", error);
+    return [];
+  }
+}
+
+export default async function page() {
+  const products = await getProducts();
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">All Products</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <Link
-            href={`/products/details/${product._id}`}
-            key={product._id}
-            className="border rounded-lg p-4 shadow-lg bg-gray-500"
-          >
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-40 object-cover rounded"
-            />
-            <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
-            <p className="text-gray-600">Price: ${product.price}</p>
-            <p
-              className={`mt-2 font-semibold ${
-                product.stock > 0 ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {product.stock > 0 ? "Available" : "Unavailable"}
-            </p>
-          </Link>
-        ))}
+    <div className="container mx-auto p-4">
+      <TitleLeft
+        title={"Product List"}
+        subTitle={"Explore our various products and find the best for you."}
+      />
+      <div className="mt-5 grid grid-cols-12 gap-6">
+        {products.length > 0 ? (
+          products.map((product) => <ProductCard key={product._id} product={product} />)
+        ) : (
+          <p className="text-center text-gray-400">No new arrivals available</p>
+        )}
       </div>
     </div>
   );
