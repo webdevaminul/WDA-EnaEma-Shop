@@ -12,7 +12,7 @@ export default function Hero() {
           Organic & Healthy
         </h1>
         <h1 className="text-3xl md:text-4xl font-bold text-gray-600 animate-fade-in">Vegetables</h1>
-        <Link href="/all-courses">
+        <Link href="/products">
           <button className="mt-5 lg:mt-10 bg-emerald-600 flex items-center gap-2 text-white hover:bg-emerald-500 font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 animate-fade-in">
             Shop Now
             <MdKeyboardDoubleArrowRight className="inline-block" />

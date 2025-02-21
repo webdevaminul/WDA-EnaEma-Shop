@@ -26,17 +26,17 @@ export default async function NewArrivals() {
   const products = await getProducts();
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto my-5 md:my-10">
       <TitleLeft
         title={"New Arrivals"}
         subTitle={"Shop online for new arrivals and get free shipping"}
       />
-      <div className="mt-5 md:mt-10 grid grid-cols-12 gap-6">
+      <div className="mt-5 grid grid-cols-12 gap-6">
         {products.length > 0 ? (
           products.map((product) => (
             <div
               key={product._id}
-              className="col-span-12 sm:col-span-6 md:col-span-3 border rounded-lg p-3 animate-fade-in"
+              className="col-span-12 sm:col-span-6 md:col-span-3 border rounded-lg hover:shadow-lg p-3 animate-fade-in"
             >
               <Link href={`/products/details/${product._id}`} className="relative">
                 <img src={product.image} alt={product.name} className="w-full h-40 object-cover" />
