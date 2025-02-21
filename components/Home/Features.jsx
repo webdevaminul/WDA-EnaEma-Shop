@@ -26,7 +26,7 @@ export default function Features() {
   ];
 
   return (
-    <div className="container mx-auto text-gray-600 my-5 md:my-10 lg:my-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="container mx-auto p-4 text-gray-600 my-5 md:my-10 lg:my-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
       {features.map((feature, index) => (
         <div
           key={index}

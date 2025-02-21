@@ -26,7 +26,7 @@ export default async function NewArrivals() {
   const products = await getProducts();
 
   return (
-    <div className="container mx-auto my-5 md:my-10 lg:my-20">
+    <div className="container mx-auto my-5 p-4 md:my-10 lg:my-20">
       <TitleLeft
         title={"New Arrivals"}
         subTitle={"Shop online for new arrivals and get free shipping"}

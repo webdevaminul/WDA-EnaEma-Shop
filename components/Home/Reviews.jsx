@@ -47,7 +47,7 @@ export default function Reviews() {
   ];
 
   return (
-    <section className="container mx-auto my-8 px-4 animate-fade-in-left">
+    <section className="container mx-auto my-8 p-4 animate-fade-in-left">
       <TitleLeft
         title={"Customer Reviews"}
         subTitle={
@@ -56,7 +56,7 @@ export default function Reviews() {
       />
 
       <Swiper
-        spaceBetween={20}
+        spaceBetween={24}
         loop={true}
         autoplay={{
           delay: 5000,
