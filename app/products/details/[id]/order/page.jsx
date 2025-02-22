@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import TitleLeft from "@/components/Titles/TitleLeft";
 
 export default function OrderPage() {
   const searchParams = useSearchParams();
@@ -65,11 +66,14 @@ export default function OrderPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-4">Review Your Order</h1>
+    <div className="p-6 max-w-5xl mx-auto min-h-96">
+      <TitleLeft
+        title={"Review Your Order"}
+        subTitle={"Please confirm your order details before proceeding."}
+      />
 
       {/* Order Summary */}
-      <div className="mb-6 border p-4 rounded-md shadow-sm">
+      <div className="mt-10 mb-5 border p-4 rounded-md text-gray-600">
         <h2 className="text-lg font-medium mb-2">Order Summary</h2>
         <div className="flex items-center space-x-4">
           <img
@@ -87,10 +91,10 @@ export default function OrderPage() {
       </div>
 
       {/* Shipping Address */}
-      <div className="border p-4 rounded-md shadow-sm">
+      <div className="text-gray-600">
         <h2 className="text-lg font-medium mb-2">Shipping Address</h2>
         <textarea
-          className="w-full border rounded p-2"
+          className="w-full border rounded p-4 outline-gray-600"
           rows="3"
           placeholder="Enter your address..."
           value={address}
@@ -99,18 +103,20 @@ export default function OrderPage() {
       </div>
 
       {/* Payment Method */}
-      <div className="mt-6 border p-4 rounded-md shadow-sm">
+      <div className="my-5 border p-4 rounded-md text-gray-600">
         <h2 className="text-lg font-medium mb-2">Payment Method</h2>
         <p>Cash on Delivery</p>
       </div>
 
       {/* Place Order Button */}
-      <button
-        className="w-full bg-blue-600 text-white py-2 mt-6 rounded-md hover:bg-blue-700"
-        onClick={handlePlaceOrder}
-      >
-        Place Order
-      </button>
+      <div className="flex items-center justify-end mt-8">
+        <button
+          className="my-2 bg-emerald-600 flex items-center gap-2 text-white hover:bg-emerald-500 font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 animate-fade-in"
+          onClick={handlePlaceOrder}
+        >
+          Place Order
+        </button>
+      </div>
     </div>
   );
 }
