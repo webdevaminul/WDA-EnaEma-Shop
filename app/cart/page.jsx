@@ -7,12 +7,14 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { removeFromCart, setCartFromDB } from "@/lib/redux/cartSlice";
 import { syncCartWithDB } from "@/lib/redux/cartSlice";
 import TitleLeft from "@/components/Titles/TitleLeft";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { cartItems, userCartLoaded } = useSelector((state) => state.cart);
   const id = user?._id;
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCartFromDB = async () => {
@@ -39,7 +41,11 @@ export default function CartPage() {
   const grandTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handleOrderNow = () => {
-    console.log("Proceed to order with cart items:", cartItems);
+    if (cartItems.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+    router.push("/order");
   };
 
   return (

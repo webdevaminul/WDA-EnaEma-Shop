@@ -1,3 +1,4 @@
+// In OrderPage.js
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,43 +9,41 @@ import TitleLeft from "@/components/Titles/TitleLeft";
 
 export default function OrderPage() {
   const searchParams = useSearchParams();
-  const product = {
+  const router = useRouter();
+  const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
+  const [address, setAddress] = useState(user?.address || "");
+
+  const urlProduct = {
     id: searchParams.get("id"),
     name: searchParams.get("name"),
     image: searchParams.get("image"),
     price: parseFloat(searchParams.get("price")),
-    quantity: parseInt(searchParams.get("quantity")),
+    quantity: parseInt(searchParams.get("quantity") || 1),
   };
-  const { user } = useSelector((state) => state.auth);
 
-  const router = useRouter();
-  const [address, setAddress] = useState(user.address);
+  const orderProducts = urlProduct.id ? [urlProduct] : cartItems;
 
+  // Redirect if no products or user
   useEffect(() => {
-    if (!user) {
-      router.push("/signin");
-    }
-  }, [user, router]);
+    if (!user) router.push("/signin");
+    if (orderProducts.length === 0) router.push("/");
+  }, [user, orderProducts, router]);
 
   const handlePlaceOrder = async () => {
-    if (!address.trim()) {
-      alert("Please enter your billing address.");
-      return;
-    }
-    if (!confirm("Are you sure you want to order this product?")) return;
+    if (!address.trim()) return alert("Please enter your address.");
+    if (!confirm("Confirm order?")) return;
 
     const orderData = {
       userId: user._id,
-      products: [
-        {
-          productId: product.id,
-          name: product.name,
-          image: product.image,
-          price: product.price,
-          quantity: 1,
-        },
-      ],
-      totalAmount: product.price * product.quantity,
+      products: orderProducts.map((item) => ({
+        productId: item.productId || item.id,
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+      totalAmount: orderProducts.reduce((total, item) => total + item.price * item.quantity, 0),
       address,
       paymentMethod: "Cash on Delivery",
       status: "Pending",
@@ -52,12 +51,11 @@ export default function OrderPage() {
 
     try {
       const { data } = await axios.post("/api/orders/create", orderData);
-
       if (data.success) {
-        alert("Order placed successfully!");
+        alert("Order placed!");
         router.push("/orders-history");
       } else {
-        alert("Failed to place order.");
+        alert("Order failed.");
       }
     } catch (error) {
       console.error("Order error:", error);
@@ -67,29 +65,32 @@ export default function OrderPage() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto min-h-96">
-      <TitleLeft
-        title={"Review Your Order"}
-        subTitle={"Please confirm your order details before proceeding."}
-      />
+      <TitleLeft title={"Review Your Order"} subTitle={"Confirm your order details"} />
 
       {/* Order Summary */}
       <div className="mt-10 mb-5 border p-4 rounded-md text-gray-600">
         <h2 className="text-lg font-medium mb-2">Order Summary</h2>
-        <div className="flex items-center space-x-4">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-20 h-20 object-cover rounded-md"
-          />
-          <div>
-            <p className="text-lg font-semibold">{product.name}</p>
-            <p>Quantity: {product.quantity}</p>
-            <p>Price: ${product.price.toFixed(2)}</p>
+        {orderProducts.map((product) => (
+          <div key={product.id || product.productId} className="flex items-center space-x-4 mb-4">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-20 h-20 object-cover rounded-md"
+            />
+            <div>
+              <p className="text-lg font-semibold">{product.name}</p>
+              <p>Quantity: {product.quantity}</p>
+              <p>Price: ${product.price.toFixed(2)}</p>
+            </div>
           </div>
-        </div>
-        <p className="text-right font-semibold mt-3">Total: ${product.price * product.quantity}</p>
+        ))}
+        <p className="text-right font-semibold mt-3">
+          Total: $
+          {orderProducts.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}
+        </p>
       </div>
 
+      {/* Rest of the component remains the same */}
       {/* Shipping Address */}
       <div className="text-gray-600">
         <h2 className="text-lg font-medium mb-2">Shipping Address</h2>

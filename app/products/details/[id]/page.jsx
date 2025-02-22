@@ -49,7 +49,7 @@ export default function ProductDetails() {
             {product.stock > 0 ? (
               <Link
                 href={{
-                  pathname: `/products/details/${product._id}/order`,
+                  pathname: `/order`,
                   query: {
                     id: product._id,
                     name: product.name,

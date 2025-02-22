@@ -53,7 +53,7 @@ export default function OrderHistory() {
             <thead className="bg-gray-100 text-gray-600">
               <tr>
                 <th className="p-3 text-left">Order ID</th>
-                <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Products</th>
                 <th className="p-3 text-left">Total Amount</th>
                 <th className="p-3 text-left">Status</th>
                 <th className="p-3 text-left">Payment</th>
@@ -64,7 +64,17 @@ export default function OrderHistory() {
               {orders.map((order) => (
                 <tr key={order._id} className="border-b text-gray-600">
                   <td className="p-3 text-nowrap">{order._id.slice(-6)}</td>
-                  <td className="p-3 text-nowrap">{order.products[0].name}</td>
+                  <td className="p-3">
+                    <ul>
+                      {order.products.map((product, index) => (
+                        <li key={index} className="mb-2 text-nowrap">
+                          <span className="font-semibold">{product.name}</span> -{" "}
+                          <span>Qty: {product.quantity}</span> -{" "}
+                          <span>Price: ${product.price.toFixed(2)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
                   <td className="p-3 text-nowrap">${order.totalAmount.toFixed(2)}</td>
                   <td className="p-3 text-nowrap">{order.status}</td>
                   <td className="p-3 text-nowrap">{order.paymentMethod}</td>
