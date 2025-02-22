@@ -9,8 +9,6 @@ export async function PUT(req, { params }) {
     await connectDB();
     const { name, phone, profile, address } = await req.json();
 
-    console.log("Received profile data:", { name, phone, profile, address });
-
     const updatedUser = await User.findByIdAndUpdate(
       id,
       {
@@ -21,8 +19,6 @@ export async function PUT(req, { params }) {
       },
       { new: true }
     );
-
-    console.log("Updated user", updatedUser);
 
     if (!updatedUser) {
       return NextResponse.json({

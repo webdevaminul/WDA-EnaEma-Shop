@@ -47,12 +47,10 @@ export async function POST(req) {
         quantity: item.quantity,
       });
 
-      // Reduce stock in the database
       product.stock -= item.quantity;
       await product.save();
     }
 
-    // Create new order
     const newOrder = new Order({
       userId,
       products: orderProducts,

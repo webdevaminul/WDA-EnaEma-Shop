@@ -1,31 +1,54 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
 import ProductCard from "@/components/ProductCard";
 import TitleLeft from "@/components/Titles/TitleLeft";
 
-async function getProducts() {
-  try {
-    const baseUrl =
-      process.env.NODE_ENV === "production"
-        ? "https://wda-ena-ema-shop.vercel.app"
-        : "http://localhost:3000";
+export default function Page() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const res = await fetch(`${baseUrl}/api/products/list`, {
-      cache: "no-store",
-    });
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await axios.get("/api/products/list");
+        setProducts(data.products);
+      } catch (error) {
+        setError("Failed to load products");
+        console.error("Error fetching products", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch products");
-    }
+    fetchProducts();
+  }, []);
 
-    const data = await res.json();
-    return data?.products || [];
-  } catch (error) {
-    console.error("Error fetching products", error);
-    return [];
+  if (loading) {
+    return (
+      <div className="container mx-auto p-4">
+        <TitleLeft
+          title={"Product List"}
+          subTitle={"Explore our various products and find the best for you."}
+        />
+        <p className="text-center text-gray-600 col-span-12 h-80">Loading...</p>
+      </div>
+    );
   }
-}
 
-export default async function page() {
-  const products = await getProducts();
+  if (error) {
+    return (
+      <div className="container mx-auto p-4">
+        <TitleLeft
+          title={"Product List"}
+          subTitle={"Explore our various products and find the best for you."}
+        />
+        <p className="text-center text-gray-600 col-span-12 h-80">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">

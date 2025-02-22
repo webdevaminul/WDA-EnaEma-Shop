@@ -8,12 +8,20 @@ export async function GET() {
 
     const products = await Product.find().sort({ createdAt: -1 });
 
+    if (!products || products.length === 0) {
+      return NextResponse.json({ success: false, message: "No products found." });
+    }
+
     return NextResponse.json({
       success: true,
       message: "Get products successfully.",
       products,
     });
   } catch (error) {
-    return NextResponse.json({ success: false, message: "Failed to get products." });
+    console.error("Error fetching products:", error);
+    return NextResponse.json({
+      success: false,
+      message: "Failed to get products.",
+    });
   }
 }

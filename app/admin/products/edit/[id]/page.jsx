@@ -51,7 +51,6 @@ export default function page() {
     setError(null);
     setLoading(true);
 
-    // Ensure price and stock are sent as numbers
     const payload = {
       ...formData,
       price: Number(formData.price),

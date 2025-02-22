@@ -53,7 +53,6 @@ export default function Signin() {
         router.push("/");
       } else {
         dispatch(loginFailure(data.message));
-        console.log(error);
       }
     } catch (err) {
       dispatch(

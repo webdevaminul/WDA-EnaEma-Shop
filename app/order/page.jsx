@@ -1,4 +1,3 @@
-// In OrderPage.js
 "use client";
 
 import { useEffect, useState } from "react";
@@ -24,7 +23,6 @@ export default function OrderPage() {
 
   const orderProducts = urlProduct.id ? [urlProduct] : cartItems;
 
-  // Redirect if no products or user
   useEffect(() => {
     if (!user) router.push("/signin");
     if (orderProducts.length === 0) router.push("/");

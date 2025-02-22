@@ -1,32 +1,54 @@
-import TitleLeft from "../Titles/TitleLeft";
-import ProductCard from "../ProductCard";
+"use client";
 
-// Fetch products on the server side
-async function getProducts() {
-  try {
-    const baseUrl =
-      process.env.NODE_ENV === "production"
-        ? "https://wda-ena-ema-shop.vercel.app"
-        : "http://localhost:3000";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import ProductCard from "@/components/ProductCard";
+import TitleLeft from "@/components/Titles/TitleLeft";
 
-    const res = await fetch(`${baseUrl}/api/products/list/new`, {
-      cache: "no-store",
-    });
+export default function NewArrivals() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch products");
-    }
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await axios.get("/api/products/list/new");
+        setProducts(data.products);
+      } catch (error) {
+        setError("Failed to load new arrivals");
+        console.error("Error fetching products", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const data = await res.json();
-    return data?.products || [];
-  } catch (error) {
-    console.error("Error fetching products", error);
-    return [];
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto my-5 p-4 md:my-10 lg:my-20">
+        <TitleLeft
+          title={"New Arrivals"}
+          subTitle={"Shop online for new arrivals and get free shipping"}
+        />
+        <p className="text-center text-gray-600 col-span-12 h-80">Loading...</p>
+      </div>
+    );
   }
-}
 
-export default async function NewArrivals() {
-  const products = await getProducts();
+  if (error) {
+    return (
+      <div className="container mx-auto my-5 p-4 md:my-10 lg:my-20">
+        <TitleLeft
+          title={"New Arrivals"}
+          subTitle={"Shop online for new arrivals and get free shipping"}
+        />
+        <p className="text-center text-gray-600 col-span-12">Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto my-5 p-4 md:my-10 lg:my-20">

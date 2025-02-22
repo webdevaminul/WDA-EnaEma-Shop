@@ -56,8 +56,6 @@ export default function ProfileUpdatePage() {
         address: formData.address,
       };
 
-      console.log(payload);
-
       const { data } = await axios.put(`/api/users/${id}/update`, payload);
       dispatch(updateProfileSuccess(data.user));
       router.push("/");
