@@ -3,7 +3,12 @@ import TitleLeft from "@/components/Titles/TitleLeft";
 
 async function getProducts() {
   try {
-    const res = await fetch(`http://localhost:3000/api/products/list`, {
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://wda-ena-ema-shop.vercel.app"
+        : "http://localhost:3000";
+
+    const res = await fetch(`${baseUrl}/api/products/list`, {
       cache: "no-store",
     });
 

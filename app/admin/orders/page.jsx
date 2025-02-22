@@ -34,7 +34,7 @@ export default function AdminOrders() {
   };
 
   return (
-    <div className="p-6 container mx-auto">
+    <div>
       <TitleLeft title="Manage Orders" subTitle="View, update or manage customer orders." />
       {loading ? (
         <p className="text-center text-gray-600 h-96">Loading orders...</p>

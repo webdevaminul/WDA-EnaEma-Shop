@@ -4,7 +4,12 @@ import ProductCard from "../ProductCard";
 // Fetch products on the server side
 async function getProducts() {
   try {
-    const res = await fetch(`http://localhost:3000/api/products/list/new`, {
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://wda-ena-ema-shop.vercel.app"
+        : "http://localhost:3000";
+
+    const res = await fetch(`${baseUrl}/api/products/list/new`, {
       cache: "no-store",
     });
 
