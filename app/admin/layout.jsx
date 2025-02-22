@@ -37,7 +37,14 @@ export default function AdminLayout({ children }) {
       <aside className="hidden md:flex w-56 bg-gray-100 text-gray-600 fixed h-full top-0 left-0 border-r">
         <div className="h-full flex flex-col w-full">
           {/* Sidebar Header */}
-          <div className="p-5 bg-gray-100 text-lg font-bold">Admin Panel</div>
+          <div className="m-5">
+            <Link
+              href="/"
+              className="text-xl md:text-2xl font-semibold text-emerald-600 font-serif mb-1"
+            >
+              EnaEma
+            </Link>
+          </div>
 
           {/* Navigation Links */}
           <nav className="flex-1 overflow-y-auto p-4">
