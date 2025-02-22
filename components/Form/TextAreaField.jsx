@@ -12,8 +12,8 @@ export default function TextAreaField({
     <div className="flex flex-col gap-1 w-full">
       <textarea
         placeholder={placeholder}
-        className={`bg-transparent outline-none placeholder:text-gray-300 p-2 border rounded ${
-          errors[name] ? "border-red-500" : "border-gray-300"
+        className={`bg-transparent outline-none placeholder:text-gray-600 p-2 border rounded ${
+          errors[name] ? "border-red-500" : "border-gray-600"
         }`}
         {...register(name, { ...validationRules })}
         rows={rows}

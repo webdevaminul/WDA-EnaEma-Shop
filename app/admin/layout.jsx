@@ -1,29 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FiMenu, FiX, FiChevronDown, FiChevronRight } from "react-icons/fi";
-import {
-  MdDashboard,
-  MdShoppingCart,
-  MdPerson,
-  MdSettings,
-  MdCategory,
-  MdAdd,
-  MdList,
-} from "react-icons/md";
+import { MdDashboard, MdShoppingCart, MdPerson, MdCategory, MdAdd, MdList } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
   const pathname = usePathname();
+  const { user } = useSelector((state) => state.auth);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user || !user.role === "admin") {
+      router.push("/");
+    }
+  }, []);
 
   const adminRoutes = [
     { name: "Dashboard", href: "/admin/dashboard", icon: MdDashboard },
     { name: "Orders", href: "/admin/orders", icon: MdShoppingCart },
     { name: "Users", href: "/admin/users", icon: MdPerson },
-    { name: "Settings", href: "/admin/settings", icon: MdSettings },
   ];
 
   const productRoutes = [
@@ -32,12 +32,12 @@ export default function AdminLayout({ children }) {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-500">
+    <div className="flex min-h-screen">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex w-64 bg-gray-900 text-white fixed h-full top-0 left-0 shadow-lg">
+      <aside className="hidden md:flex w-56 bg-gray-100 text-gray-600 fixed h-full top-0 left-0 border-r">
         <div className="h-full flex flex-col w-full">
           {/* Sidebar Header */}
-          <div className="p-5 bg-gray-800 text-lg font-bold">Admin Panel</div>
+          <div className="p-5 bg-gray-100 text-lg font-bold">Admin Panel</div>
 
           {/* Navigation Links */}
           <nav className="flex-1 overflow-y-auto p-4">
@@ -47,7 +47,9 @@ export default function AdminLayout({ children }) {
                   <Link
                     href={href}
                     className={`flex items-center gap-3 p-3 rounded-lg transition ${
-                      pathname === href ? "bg-gray-700" : "hover:bg-gray-800"
+                      pathname === href
+                        ? "bg-emerald-600 text-white hover:bg-emerald-500"
+                        : "hover:bg-emerald-500 hover:text-white"
                     }`}
                   >
                     <Icon size={20} />
@@ -60,7 +62,7 @@ export default function AdminLayout({ children }) {
               <li>
                 <button
                   onClick={() => setProductsOpen(!productsOpen)}
-                  className="w-full flex items-center justify-between p-3 rounded-lg transition hover:bg-gray-800"
+                  className="w-full flex items-center justify-between p-3 rounded-lg transition hover:bg-emerald-500 hover:text-white"
                 >
                   <span className="flex items-center gap-3">
                     <MdCategory size={20} />
@@ -76,7 +78,9 @@ export default function AdminLayout({ children }) {
                         <Link
                           href={href}
                           className={`flex items-center gap-3 p-2 rounded-lg transition ${
-                            pathname === href ? "bg-gray-700" : "hover:bg-gray-800"
+                            pathname === href
+                              ? "bg-emerald-600 text-white hover:bg-emerald-500"
+                              : "hover:bg-emerald-500 hover:text-white"
                           }`}
                         >
                           <Icon size={18} />

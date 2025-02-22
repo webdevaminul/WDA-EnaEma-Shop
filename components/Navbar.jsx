@@ -151,7 +151,7 @@ const ProfileMenu = ({ user, handleSignOut, setProfileMenuOpen }) => (
 
     {user.role === "admin" && (
       <MenuItem
-        href="/admin/dashboard"
+        href="/admin"
         label="Admin Dashboard"
         icon={<IoOptions />}
         setProfileMenuOpen={setProfileMenuOpen}
