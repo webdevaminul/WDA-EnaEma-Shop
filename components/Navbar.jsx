@@ -159,7 +159,7 @@ const ProfileMenu = ({ user, handleSignOut, setProfileMenuOpen }) => (
     )}
 
     <MenuItem
-      href="/order-history"
+      href="/orders-history"
       label="Order History"
       icon={<IoOptions />}
       setProfileMenuOpen={setProfileMenuOpen}

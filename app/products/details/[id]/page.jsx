@@ -56,6 +56,7 @@ export default function ProductDetails() {
                     image: product.image,
                     price: product.price,
                     stock: product.stock,
+                    quantity: 1,
                   },
                 }}
               >

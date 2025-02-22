@@ -17,7 +17,7 @@ export default function OrderPage() {
   const { user } = useSelector((state) => state.auth);
 
   const router = useRouter();
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(user.address);
 
   useEffect(() => {
     if (!user) {
@@ -54,7 +54,7 @@ export default function OrderPage() {
 
       if (data.success) {
         alert("Order placed successfully!");
-        router.push("/orders");
+        router.push("/orders-history");
       } else {
         alert("Failed to place order.");
       }
