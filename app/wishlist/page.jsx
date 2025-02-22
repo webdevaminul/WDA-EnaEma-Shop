@@ -1,13 +1,15 @@
 "use client";
 
+import axios from "axios";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { AiOutlineDelete } from "react-icons/ai";
 import {
   removeFromWishlist,
   setWishlistFromDB,
   syncWishlistWithDB,
 } from "@/lib/redux/wishlistSlice";
-import axios from "axios";
+import TitleLeft from "@/components/Titles/TitleLeft";
 
 export default function WishlistPage() {
   const dispatch = useDispatch();
@@ -29,51 +31,62 @@ export default function WishlistPage() {
       }
     };
     fetchWishlist();
-  }, [user, userWishlistLoaded, dispatch]);
+  }, [user, userWishlistLoaded, dispatch, id]);
 
-  const handleRemove = async (id) => {
-    dispatch(removeFromWishlist(id));
+  const handleRemove = async (productId) => {
+    dispatch(removeFromWishlist(productId));
 
     if (user && user._id) {
-      const updatedWishlist = wishlistItems.filter((item) => item.productId !== id);
+      const updatedWishlist = wishlistItems.filter((item) => item.productId !== productId);
       dispatch(syncWishlistWithDB(user._id, updatedWishlist));
     }
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">Wishlist</h1>
+    <div className="p-6 max-w-5xl mx-auto">
+      <TitleLeft title={"Wishlist"} subTitle={"Your favorite products are saved here!"} />
 
       {wishlistItems.length === 0 ? (
-        <p className="text-gray-600 text-center h-96">Your wishlist is empty.</p>
+        <p className="text-gray-500 text-center h-96 mt-5">Your wishlist is empty.</p>
       ) : (
-        <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-800 text-white">
-            <tr>
-              <th className="p-3 text-left">Image</th>
-              <th className="p-3 text-left">Product</th>
-              <th className="p-3 text-left">Price</th>
-              <th className="p-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {wishlistItems.map((item) => (
-              <tr key={item.productId} className="border-b">
-                <td className="p-3">{item.image}</td>
-                <td className="p-3">{item.name}</td>
-                <td className="p-3">${item.price}</td>
-                <td className="p-3">
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                    onClick={() => handleRemove(item.productId)}
-                  >
-                    Remove
-                  </button>
-                </td>
+        <div className="min-h-96 mt-5 overflow-x-auto">
+          <table className="w-full border-collapse border">
+            <thead className="bg-gray-100 text-gray-600">
+              <tr>
+                <th className="p-3 text-left">Product</th>
+                <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Price</th>
+                <th className="p-3 text-left">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {wishlistItems.map((item) => (
+                <tr key={item.productId} className="border-b text-gray-600">
+                  <td className="pl-3">
+                    <figure className="h-14 aspect-square rounded">
+                      <img
+                        src={item.image}
+                        alt="Product"
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </figure>
+                  </td>
+                  <td className="p-3 text-nowrap">{item.name}</td>
+                  <td className="p-3 text-nowrap">${item.price}</td>
+                  <td className="p-3 flex gap-2">
+                    <button
+                      className="w-9 h-9 aspect-square rounded-full p-1 flex items-center justify-center hover:bg-red-500 text-gray-600 hover:text-white text-lg transition"
+                      onClick={() => handleRemove(item.productId)}
+                    >
+                      <AiOutlineDelete />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
