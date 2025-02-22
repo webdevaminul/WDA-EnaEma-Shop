@@ -1,7 +1,6 @@
 import ProductCard from "@/components/ProductCard";
 import TitleLeft from "@/components/Titles/TitleLeft";
 
-// Fetch products on the server side
 async function getProducts() {
   try {
     const res = await fetch(`http://localhost:3000/api/products/list`, {

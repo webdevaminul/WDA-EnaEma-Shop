@@ -50,8 +50,16 @@ export default function page() {
   const handleFormSubmit = async (formData) => {
     setError(null);
     setLoading(true);
+
+    // Ensure price and stock are sent as numbers
+    const payload = {
+      ...formData,
+      price: Number(formData.price),
+      stock: Number(formData.stock),
+    };
+
     try {
-      const { data } = await axios.put(`/api/products/admin/update/${id}`, formData);
+      const { data } = await axios.put(`/api/products/admin/update/${id}`, payload);
       if (data.success) {
         router.push("/admin/products");
       } else {

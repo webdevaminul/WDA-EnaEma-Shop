@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { MdEdit, MdDelete, MdVisibility } from "react-icons/md";
 import Link from "next/link";
 import axios from "axios";
-import TableButton from "@/components/Table/TableButton";
 import TitleLeft from "@/components/Titles/TitleLeft";
 
 export default function AdminProducts() {
@@ -75,7 +74,19 @@ export default function AdminProducts() {
                     <td className="p-3 text-nowrap">${product.price}</td>
                     <td className="p-3 text-nowrap">{product.stock}</td>
                     <td className="p-3 flex flex-nowrap gap-2">
-                      <Link href={`/products/details/${product._id}`}>
+                      <Link
+                        href={{
+                          pathname: `/products/details/${product._id}`,
+                          query: {
+                            id: product._id,
+                            name: product.name,
+                            price: product.price,
+                            image: product.image,
+                            description: product.description,
+                            stock: product.stock,
+                          },
+                        }}
+                      >
                         <button className="w-9 h-9 aspect-square rounded-full p-1 flex items-center justify-center hover:bg-emerald-500 text-gray-600 hover:text-white text-lg transition">
                           <MdVisibility />
                         </button>
