@@ -12,7 +12,7 @@ export default function OrderPage() {
     name: searchParams.get("name"),
     image: searchParams.get("image"),
     price: parseFloat(searchParams.get("price")),
-    // quantity: parseInt(searchParams.get("quantity")),
+    quantity: parseInt(searchParams.get("quantity")),
   };
   const { user } = useSelector((state) => state.auth);
 
@@ -48,7 +48,7 @@ export default function OrderPage() {
       paymentMethod: "Cash on Delivery",
       status: "Pending",
     };
-    console.log("orderData", orderData);
+
     try {
       const { data } = await axios.post("/api/orders/create", orderData);
 

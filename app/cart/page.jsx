@@ -1,17 +1,17 @@
 "use client";
 
+import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { removeFromCart, updateQuantity, setCartFromDB } from "@/lib/redux/cartSlice";
+import { AiOutlineDelete } from "react-icons/ai";
+import { removeFromCart, setCartFromDB } from "@/lib/redux/cartSlice";
 import { syncCartWithDB } from "@/lib/redux/cartSlice";
-import axios from "axios";
+import TitleLeft from "@/components/Titles/TitleLeft";
 
 export default function CartPage() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
-  const cartItems = useSelector((state) => state.cart.cartItems);
-  const userCartLoaded = useSelector((state) => state.cart.userCartLoaded);
-
+  const { user } = useSelector((state) => state.auth);
+  const { cartItems, userCartLoaded } = useSelector((state) => state.cart);
   const id = user?._id;
 
   useEffect(() => {
@@ -28,18 +28,6 @@ export default function CartPage() {
     fetchCartFromDB();
   }, [user, dispatch, userCartLoaded]);
 
-  const handleQuantityChange = (productId, quantity, stock) => {
-    dispatch(updateQuantity({ productId, quantity, stock }));
-
-    if (user && user._id) {
-      const updatedCart = cartItems.map((item) =>
-        item.productId === productId ? { ...item, quantity } : item
-      );
-
-      dispatch(syncCartWithDB(user._id, updatedCart));
-    }
-  };
-
   const handleRemove = (productId) => {
     dispatch(removeFromCart(productId));
 
@@ -48,69 +36,73 @@ export default function CartPage() {
       dispatch(syncCartWithDB(user._id, updatedCart));
     }
   };
+  const grandTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const handleOrderNow = () => {
+    console.log("Proceed to order with cart items:", cartItems);
+  };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
+    <div className="p-6 max-w-5xl mx-auto">
+      <TitleLeft title={"Shopping Cart"} subTitle={"Your selected items are ready for purchase!"} />
 
       {cartItems.length === 0 ? (
-        <p className="text-gray-500 text-center">Your cart is empty.</p>
+        <p className="text-gray-500 text-center h-96 mt-5">Your cart is empty.</p>
       ) : (
-        <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-800 text-white">
-            <tr>
-              <th className="p-3 text-left">Product</th>
-              <th className="p-3 text-left">Price</th>
-              <th className="p-3 text-left">Quantity</th>
-              <th className="p-3 text-left">Total</th>
-              <th className="p-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cartItems.map((item) => (
-              <tr key={item.productId} className="border-b">
-                <td className="p-3">{item.name}</td>
-                <td className="p-3">${item.price}</td>
-                <td className="p-3 flex gap-2">
-                  <button
-                    className="bg-gray-800 px-3 py-1 rounded text-white"
-                    onClick={() =>
-                      handleQuantityChange(
-                        item.productId,
-                        Math.max(item.quantity - 1, 1),
-                        item.stock
-                      )
-                    }
-                  >
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    className="bg-gray-800 px-3 py-1 rounded text-white"
-                    onClick={() =>
-                      handleQuantityChange(
-                        item.productId,
-                        Math.min(item.quantity + 1, item.stock),
-                        item.stock
-                      )
-                    }
-                  >
-                    +
-                  </button>
-                </td>
-                <td className="p-3">${(item.price * item.quantity).toFixed(2)}</td>
-                <td className="p-3">
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                    onClick={() => handleRemove(item.productId)}
-                  >
-                    Remove
-                  </button>
-                </td>
+        <div className="min-h-96 mt-5 overflow-x-auto">
+          <table className="w-full border-collapse border">
+            <thead className="bg-gray-100 text-gray-600">
+              <tr>
+                <th className="p-3 text-left">Product</th>
+                <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Price</th>
+                <th className="p-3 text-left">Quantity</th>
+                <th className="p-3 text-left">Total</th>
+                <th className="p-3 text-left">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {cartItems.map((item) => (
+                <tr key={item.productId} className="border-b text-gray-600">
+                  <td className="pl-3">
+                    <figure className="h-14 aspect-square rounded">
+                      <img
+                        src={item.image}
+                        alt="Product"
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </figure>
+                  </td>
+                  <td className="p-3 text-nowrap">{item.name}</td>
+                  <td className="p-3 text-nowrap">${item.price}</td>
+                  <td className="p-3 flex items-center flex-nowrap gap-2">{item.quantity}</td>
+                  <td className="p-3 text-nowrap">${(item.price * item.quantity).toFixed(2)}</td>
+                  <td className="p-3 flex gap-2">
+                    <button
+                      className="w-9 h-9 aspect-square rounded-full p-1 flex items-center justify-center hover:bg-red-500 text-gray-600 hover:text-white text-lg transition"
+                      onClick={() => handleRemove(item.productId)}
+                    >
+                      <AiOutlineDelete />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="flex justify-end items-center mt-6 pt-4">
+            <p className="text-lg text-emerald-600">Grand Total: ${grandTotal.toFixed(2)}</p>
+          </div>
+
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={handleOrderNow}
+              className="my-2 bg-emerald-600 flex items-center gap-2 text-white hover:bg-emerald-500 font-semibold py-3 px-6 rounded transition-all duration-300 transform animate-fade-in"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

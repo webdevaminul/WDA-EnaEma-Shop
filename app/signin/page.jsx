@@ -45,6 +45,7 @@ export default function Signin() {
         wishlistItems,
       };
       const { data } = await axios.post("/api/auth/signin", requestData);
+
       if (data.success) {
         dispatch(LoginSuccess(data.user));
         dispatch(setCartFromDB(data.cartItems));
@@ -52,6 +53,7 @@ export default function Signin() {
         router.push("/");
       } else {
         dispatch(loginFailure(data.message));
+        console.log(error);
       }
     } catch (err) {
       dispatch(
@@ -61,10 +63,8 @@ export default function Signin() {
   };
 
   useEffect(() => {
-    if (error) {
-      dispatch(resetError());
-    }
-  }, [dispatch, error]);
+    dispatch(resetError());
+  }, [dispatch]);
 
   return (
     <main className="max-w-xs mx-auto flex items-center justify-center h-[28rem]">

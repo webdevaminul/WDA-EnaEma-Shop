@@ -62,10 +62,8 @@ export default function Signup() {
   };
 
   useEffect(() => {
-    if (error) {
-      dispatch(resetError());
-    }
-  }, [dispatch, error]);
+    dispatch(resetError());
+  }, [dispatch]);
 
   return (
     <main className="max-w-xs mx-auto flex items-center justify-center">

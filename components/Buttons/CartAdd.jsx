@@ -7,8 +7,8 @@ import { BiCartAdd } from "react-icons/bi";
 
 export default function CartAdd({ product, quantity = 1 }) {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
-  const cartItems = useSelector((state) => state.cart.cartItems);
+  const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
   const [loading, setLoading] = useState(false);
 
   const handleAddToCart = () => {

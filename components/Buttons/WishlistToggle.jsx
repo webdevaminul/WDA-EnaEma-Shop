@@ -7,26 +7,33 @@ import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 export default function WishlistToggle({ product }) {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
-  const wishlist = useSelector((state) => state.wishlist.wishlistItems);
+  const { user } = useSelector((state) => state.auth);
+  const { wishlistItems } = useSelector((state) => state.wishlist);
   const [loading, setLoading] = useState(false);
 
-  const isInWishlist = wishlist.some((item) => item._id === product._id);
+  const isInWishlist = wishlistItems.some((item) => item.productId === product._id);
 
   const handleWishlistToggle = () => {
     if (!product) return;
     setLoading(true);
 
+    const wishlistItem = {
+      productId: product._id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+    };
+
     if (isInWishlist) {
       dispatch(removeFromWishlist(product._id));
     } else {
-      dispatch(addToWishlist(product));
+      dispatch(addToWishlist(wishlistItem));
     }
 
     if (user && user._id) {
       const updatedWishlist = isInWishlist
-        ? wishlist.filter((item) => item._id !== product._id)
-        : [...wishlist, product];
+        ? wishlistItems.filter((item) => item.productId !== product._id)
+        : [...wishlistItems, wishlistItem];
 
       dispatch(syncWishlistWithDB(user._id, updatedWishlist));
     }

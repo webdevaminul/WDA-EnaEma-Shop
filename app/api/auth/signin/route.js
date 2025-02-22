@@ -9,6 +9,7 @@ export async function POST(req) {
     const { email, password, cartItems, wishlistItems } = await req.json();
 
     const user = await User.findOne({ email });
+
     if (!user) {
       return NextResponse.json({ success: false, message: `No user found with "${email}"` });
     }

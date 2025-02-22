@@ -3,7 +3,7 @@ import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 
 export async function PUT(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await connectDB();

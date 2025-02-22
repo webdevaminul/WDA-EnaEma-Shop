@@ -6,10 +6,7 @@ export async function GET(req, { params }) {
   try {
     await connectDB();
 
-    // Await params to ensure it's resolved before accessing its properties
     const { userId } = await params;
-
-    console.log("Fetching orders for user:", userId);
 
     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
 

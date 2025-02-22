@@ -33,7 +33,7 @@ export default async function page() {
         {products.length > 0 ? (
           products.map((product) => <ProductCard key={product._id} product={product} />)
         ) : (
-          <p className="text-center text-gray-400">No new arrivals available</p>
+          <p className="text-center text-gray-600 col-span-12 h-80">No products available</p>
         )}
       </div>
     </div>

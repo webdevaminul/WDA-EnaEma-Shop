@@ -16,6 +16,7 @@ export async function POST(req) {
     const updatedCart = cartItems.map((item) => ({
       productId: item.productId,
       name: item.name,
+      image: item.image,
       price: item.price,
       quantity: item.quantity,
     }));

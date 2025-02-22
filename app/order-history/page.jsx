@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 export default function OrderHistory() {
-  const user = useSelector((state) => state.auth.user);
+  const { user } = useSelector((state) => state.auth);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const userId = user?._id;

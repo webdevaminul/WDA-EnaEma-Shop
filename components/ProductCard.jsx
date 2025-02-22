@@ -4,7 +4,7 @@ import WishlistToggle from "./Buttons/WishlistToggle";
 
 const ProductCard = ({ product }) => {
   return (
-    <div className="col-span-12 sm:col-span-6 md:col-span-3 border rounded-lg hover:shadow-lg p-3 animate-fade-in">
+    <div className="col-span-12 sm:col-span-6 lg:col-span-3 border rounded-lg hover:shadow-lg p-3 animate-fade-in">
       <Link
         href={{
           pathname: `/products/details/${product._id}`,
@@ -29,10 +29,10 @@ const ProductCard = ({ product }) => {
         </p>
       </Link>
 
-      <div className="border-t pt-3">
-        <h2 className="text-lg text-gray-600">{product.name}</h2>
-        <div className="flex items-center justify-between">
-          <p className="mt-3 font-bold text-gray-600">${product.price}</p>
+      <div className="border-t pt-3 grid grid-rows-3">
+        <h2 className="text-lg text-gray-600 row-span-2 pt-2">{product.name}</h2>
+        <div className="flex items-center justify-between row-span-1">
+          <p className="font-bold text-gray-600">${product.price}</p>
           <div className="flex items-center gap-2">
             <CartAdd product={product} />
             <WishlistToggle product={product} />
