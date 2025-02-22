@@ -5,6 +5,7 @@ import { MdEdit, MdDelete, MdVisibility } from "react-icons/md";
 import Link from "next/link";
 import axios from "axios";
 import TableButton from "@/components/Table/TableButton";
+import TitleLeft from "@/components/Titles/TitleLeft";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -35,15 +36,16 @@ export default function AdminProducts() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">Product Management</h1>
+    <div className="p-6 max-w-5xl mx-auto">
+      <TitleLeft title={"Manage Product"} subTitle={"View, edit or delete product from shop..."} />
       {loading ? (
-        <p className="text-center text-gray-500">Loading products...</p>
+        <p className="text-center text-gray-600 h-96">Loading products...</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-400 shadow-md rounded-lg overflow-hidden">
-            <thead className="bg-gray-800 text-white">
+        <div className="min-h-96 mt-8 overflow-x-auto">
+          <table className="w-full border-collapse border">
+            <thead className="bg-gray-100 text-gray-600">
               <tr>
+                <th className="p-3 text-left">Product</th>
                 <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Price</th>
                 <th className="p-3 text-left">Stock</th>
@@ -53,35 +55,42 @@ export default function AdminProducts() {
             <tbody>
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="p-4 text-center text-gray-500">
+                  <td colSpan="4" className="p-4 text-center text-gray-600">
                     No products found
                   </td>
                 </tr>
               ) : (
                 products.map((product) => (
-                  <tr key={product._id} className="border-b hover:bg-gray-500">
-                    <td className="p-3">{product.name}</td>
-                    <td className="p-3">${product.price}</td>
-                    <td className="p-3">{product.stock}</td>
-                    <td className="p-3 flex gap-2">
+                  <tr key={product._id} className="border-b text-gray-600">
+                    <td>
+                      <figure className="h-14 aspect-square rounded">
+                        <img
+                          src={product.image}
+                          alt="Product"
+                          className="w-full h-full object-cover object-center"
+                        />
+                      </figure>
+                    </td>
+                    <td className="p-3 text-nowrap">{product.name}</td>
+                    <td className="p-3 text-nowrap">${product.price}</td>
+                    <td className="p-3 text-nowrap">{product.stock}</td>
+                    <td className="p-3 flex flex-nowrap gap-2">
                       <Link href={`/products/details/${product._id}`}>
-                        <TableButton variant="outline" size="sm">
+                        <button className="w-9 h-9 aspect-square rounded-full p-1 flex items-center justify-center hover:bg-emerald-500 text-gray-600 hover:text-white text-lg transition">
                           <MdVisibility />
-                        </TableButton>
+                        </button>
                       </Link>
                       <Link href={`/admin/products/edit/${product._id}`}>
-                        <TableButton variant="outline" size="sm" className="text-blue-600">
+                        <button className="w-9 h-9 aspect-square rounded-full p-1 flex items-center justify-center hover:bg-emerald-500 text-gray-600 hover:text-white text-lg transition">
                           <MdEdit />
-                        </TableButton>
+                        </button>
                       </Link>
-                      <TableButton
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600"
+                      <button
+                        className="w-9 h-9 aspect-square rounded-full p-1 flex items-center justify-center hover:bg-red-500 text-gray-600 hover:text-white text-lg transition"
                         onClick={() => handleDelete(product._id)}
                       >
                         <MdDelete />
-                      </TableButton>
+                      </button>
                     </td>
                   </tr>
                 ))
