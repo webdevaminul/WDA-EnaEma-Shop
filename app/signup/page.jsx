@@ -17,7 +17,7 @@ import { setWishlistFromDB } from "@/lib/redux/wishlistSlice";
 import { VALIDATION_MESSAGES } from "@/utils/validationMessages";
 import {
   loginFailure,
-  LoginSuccess,
+  loginSuccess,
   requestFailure,
   requestStart,
   resetError,
@@ -47,7 +47,7 @@ export default function Signup() {
       };
       const { data } = await axios.post("/api/auth/signup", requestData);
       if (data.success) {
-        dispatch(LoginSuccess(data.user));
+        dispatch(loginSuccess(data.user));
         dispatch(setCartFromDB(data.cartItems));
         dispatch(setWishlistFromDB(data.wishlistItems));
         router.push("/");

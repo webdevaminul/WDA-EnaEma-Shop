@@ -165,8 +165,8 @@ const ProfileMenu = ({ user, handleSignOut, setProfileMenuOpen }) => (
       setProfileMenuOpen={setProfileMenuOpen}
     />
     <MenuItem
-      href="/account-settings"
-      label="Manage Account"
+      href="/manage-profile"
+      label="Manage Profile"
       icon={<IoOptions />}
       setProfileMenuOpen={setProfileMenuOpen}
     />

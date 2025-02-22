@@ -19,4 +19,5 @@ export const VALIDATION_MESSAGES = {
   PRODUCT_QUANTITY_MIN: "Quantity must be at least 0",
   PRODUCT_DESCRIPTION_REQUIRED: "Product description is required",
   PRODUCT_DESCRIPTION_MAX_LENGTH: "Max 500 characters",
+  PROFILE_IMAGE_REQUIRED: "Profile image is required",
 };
